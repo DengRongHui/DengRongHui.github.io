@@ -2,125 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>3D 时钟</title>
-
-    <!-- 引用 Three.js 库 -->
+    <title>3D Tetris</title>
     <script src="https://threejs.org/build/three.js"></script>
-
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            color: #61dafb;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            background-color: #282c35;
-        }
-
-        #clock-container {
-            position: relative;
-        }
-
-        #clock {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-    </style>
 </head>
 <body>
-    <!-- 时钟容器 -->
-    <div id="clock-container">
-        <script>
-            // 创建场景
-            var scene = new THREE.Scene();
+    <script>
+        // 创建场景
+        var scene = new THREE.Scene();
 
-            // 创建透视相机
-            var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.z = 20;
+        // 创建透视相机
+        var camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 10;
 
-            // 创建 WebGL 渲染器
-            var renderer = new THREE.WebGLRenderer({ alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(renderer.domElement);
+        // 创建 WebGL 渲染器
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
 
-            // 创建时钟模型
-            var clockGeometry = new THREE.Group();
+        // 创建俄罗斯方块
+        var cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+        var cubeMaterial = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+        var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        scene.add(cube);
 
-            // 创建时钟表盘
-            var clockFaceGeometry = new THREE.CircleGeometry(5, 64);
-            var clockFaceMaterial = new THREE.MeshBasicMaterial({ color: 0x61dafb, side: THREE.DoubleSide });
-            var clockFace = new THREE.Mesh(clockFaceGeometry, clockFaceMaterial);
-            clockGeometry.add(clockFace);
+        // 添加光源
+        var light = new THREE.PointLight(0xffffff, 1, 100);
+        light.position.set(0, 0, 10);
+        scene.add(light);
 
-            // 创建时、分、秒针
-            var hourHandGeometry = new THREE.BoxGeometry(0.2, 4, 0.2);
-            var minuteHandGeometry = new THREE.BoxGeometry(0.1, 5, 0.1);
-            var secondHandGeometry = new THREE.BoxGeometry(0.05, 5.5, 0.05);
+        // 动画循环
+        var animate = function () {
+            requestAnimationFrame(animate);
 
-            var hourHandMaterial = new THREE.MeshBasicMaterial({ color: 0x61dafb });
-            var minuteHandMaterial = new THREE.MeshBasicMaterial({ color: 0x61dafb });
-            var secondHandMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            // 旋转俄罗斯方块
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
 
-            var hourHand = new THREE.Mesh(hourHandGeometry, hourHandMaterial);
-            var minuteHand = new THREE.Mesh(minuteHandGeometry, minuteHandMaterial);
-            var secondHand = new THREE.Mesh(secondHandGeometry, secondHandMaterial);
+            // 渲染场景
+            renderer.render(scene, camera);
+        };
 
-            // 设置时、分、秒针的位置
-            hourHand.position.set(0, 2, 0);
-            minuteHand.position.set(0, 2.5, 0);
-            secondHand.position.set(0, 2.75, 0);
+        // 调整窗口大小时更新相机
+        window.addEventListener('resize', function () {
+            var newWidth = window.innerWidth;
+            var newHeight = window.innerHeight;
 
-            // 添加时、分、秒针到时钟模型
-            clockGeometry.add(hourHand);
-            clockGeometry.add(minuteHand);
-            clockGeometry.add(secondHand);
+            camera.aspect = newWidth / newHeight;
+            camera.updateProjectionMatrix();
 
-            // 添加时钟模型到场景
-            scene.add(clockGeometry);
+            renderer.setSize(newWidth, newHeight);
+        });
 
-            // 添加光源
-            var light = new THREE.PointLight(0xffffff, 1, 100);
-            light.position.set(0, 0, 30);
-            scene.add(light);
-
-            // 动画循环
-            var animate = function () {
-                requestAnimationFrame(animate);
-
-                // 获取当前时间
-                var now = new Date();
-                var hours = now.getHours() % 12; // 转换为12小时制
-                var minutes = now.getMinutes();
-                var seconds = now.getSeconds();
-
-                // 旋转时、分、秒针
-                hourHand.rotation.z = -hours * (Math.PI / 6) - (minutes / 60) * (Math.PI / 6);
-                minuteHand.rotation.z = -minutes * (Math.PI / 30);
-                secondHand.rotation.z = -seconds * (Math.PI / 30);
-
-                // 渲染场景
-                renderer.render(scene, camera);
-            };
-
-            // 调整窗口大小时更新相机
-            window.addEventListener('resize', function () {
-                var newWidth = window.innerWidth;
-                var newHeight = window.innerHeight;
-
-                camera.aspect = newWidth / newHeight;
-                camera.updateProjectionMatrix();
-
-                renderer.setSize(newWidth, newHeight);
-            });
-
-            // 开始动画
-            animate();
-        </script>
-    </div>
+        // 开始动画
+        animate();
+    </script>
 </body>
 </html>
