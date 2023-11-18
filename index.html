@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="1"> <!-- 页面每秒自动刷新一次 -->
-    <title>实时时间21</title>
+    <title>实时时间</title>
 
     <!-- 引用粒子效果库 -->
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -19,6 +18,7 @@
             margin: 0;
             overflow: hidden; /* 隐藏溢出的粒子效果 */
             transition: color 0.5s;
+            background-color: #282c35;
         }
 
         h1 {
@@ -39,8 +39,6 @@
         }
     </style>
 </head>
-<!-- ... 以下保持不变 ... -->
-
 <body>
     <div id="particles-js"></div>
 
@@ -49,10 +47,13 @@
 
     <script>
         function updateClock() {
-            var currentTime = new Date();
-            var hours = currentTime.getHours();
-            var minutes = currentTime.getMinutes();
-            var seconds = currentTime.getSeconds();
+            // 获取当前时间戳
+            var currentTimeStamp = new Date().getTime();
+
+            // 根据时间戳计算时、分、秒
+            var hours = new Date(currentTimeStamp).getHours();
+            var minutes = new Date(currentTimeStamp).getMinutes();
+            var seconds = new Date(currentTimeStamp).getSeconds();
 
             // 添加前导零
             minutes = (minutes < 10 ? "0" : "") + minutes;
